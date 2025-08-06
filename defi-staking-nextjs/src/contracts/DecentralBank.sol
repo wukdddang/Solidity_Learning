@@ -1,4 +1,6 @@
-pragma solidity ^0.5.0;
+// SPDX-License-Identifier: MIT
+
+pragma solidity ^0.7.0;
 
 import './Tether.sol';
 import './RWD.sol';
@@ -15,7 +17,7 @@ contract DecentralBank {
   mapping(address => bool) public hasStaked;
   mapping(address => bool) public isStaking;
 
-  constructor(RWD _rwd, Tether _tether) public {
+  constructor(RWD _rwd, Tether _tether)  {
     rwd = _rwd;
     tether = _tether;
     owner = msg.sender;
@@ -49,7 +51,7 @@ contract DecentralBank {
     for (uint i = 0; i < stakers.length; i++) {
       if (stakers[i] == msg.sender) {
         stakers[i] = stakers[stakers.length - 1];
-        stakers.length--;
+        delete stakers[stakers.length - 1];
       }
     }
   }

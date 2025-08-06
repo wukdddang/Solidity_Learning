@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import AccountImporter from "./components/account-importer";
+import ContractInfo from "./components/contract-info";
 
 export default function Home() {
   const [error, setError] = useState<string>("");
@@ -39,7 +40,13 @@ export default function Home() {
             </p>
           </div>
 
-          <AccountImporter customRpcUrl={customRpcUrl} onError={handleError} />
+          <div className="space-y-6">
+            <ContractInfo customRpcUrl={customRpcUrl} onError={handleError} />
+            <AccountImporter
+              customRpcUrl={customRpcUrl}
+              onError={handleError}
+            />
+          </div>
 
           {error && (
             <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
