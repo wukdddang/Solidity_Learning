@@ -98,6 +98,10 @@ export default function ContractInfo({
                 <strong>총 발행량:</strong>{" "}
                 {parseFloat(tetherInfo.totalSupply).toLocaleString()} USDT
               </p>
+              <p className="text-green-700">
+                <strong>컨트랙트 주소:</strong>{" "}
+                {shortenAddress(tetherInfo.address)}
+              </p>
             </div>
           ) : (
             <p className="text-xs text-gray-500">로딩 중...</p>
@@ -124,6 +128,10 @@ export default function ContractInfo({
                 <strong>총 발행량:</strong>{" "}
                 {parseFloat(rwdInfo.totalSupply).toLocaleString()} RWD
               </p>
+              <p className="text-green-700">
+                <strong>컨트랙트 주소:</strong>{" "}
+                {shortenAddress(rwdInfo.address)}
+              </p>
             </div>
           ) : (
             <p className="text-xs text-gray-500">로딩 중...</p>
@@ -139,6 +147,10 @@ export default function ContractInfo({
             <div className="text-xs space-y-1">
               <p className="text-green-700">
                 <strong>이름:</strong> {decentralBankInfo.name}
+              </p>
+              <p className="text-green-700">
+                <strong>컨트랙트 주소:</strong>{" "}
+                {shortenAddress(decentralBankInfo.address)}
               </p>
               <p className="text-green-700">
                 <strong>소유자:</strong>{" "}

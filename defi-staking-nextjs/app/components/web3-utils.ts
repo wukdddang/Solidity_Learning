@@ -21,6 +21,7 @@ export interface ITetherContractInfo {
   symbol: string;
   decimals: number;
   totalSupply: string;
+  address: string;
 }
 
 export interface IRWDContractInfo {
@@ -28,11 +29,13 @@ export interface IRWDContractInfo {
   symbol: string;
   decimals: number;
   totalSupply: string;
+  address: string;
 }
 
 export interface IDecentralBankInfo {
   name: string;
   owner: string;
+  address: string;
   tetherAddress: string;
   rwdAddress: string;
   stakersCount: number;
@@ -246,6 +249,7 @@ export const getRWDContractInfo = async (
       symbol,
       decimals: parseInt(decimals),
       totalSupply: totalSupplyInTokens,
+      address: rwdAddress,
     };
   } catch (error: any) {
     console.error("RWD 토큰 정보 조회 실패:", error);
@@ -335,6 +339,7 @@ export const getDecentralBankInfo = async (
     return {
       name,
       owner,
+      address: decentralBankAddress,
       tetherAddress,
       rwdAddress,
       stakersCount: stakersCountNum,
@@ -391,6 +396,7 @@ export const getTetherContractInfo = async (
       symbol,
       decimals: parseInt(decimals),
       totalSupply: totalSupplyInTokens,
+      address: tetherAddress,
     };
   } catch (error: any) {
     console.error("테더 토큰 정보 조회 실패:", error);
