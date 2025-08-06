@@ -1,4 +1,4 @@
-import type { TetherContractInfo } from "./Web3Utils";
+import type { TetherContractInfo } from "./web3-utils";
 
 interface TetherContractInfoProps {
   contractInfo: TetherContractInfo | null;

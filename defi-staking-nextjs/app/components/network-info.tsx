@@ -1,4 +1,4 @@
-import type { NetworkInfo } from "./Web3Utils";
+import type { NetworkInfo } from "./web3-utils";
 
 interface NetworkInfoProps {
   networkInfo: NetworkInfo | null;

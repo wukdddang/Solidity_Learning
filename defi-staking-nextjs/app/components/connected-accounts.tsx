@@ -1,6 +1,6 @@
-import { NetworkInfo, TetherContractInfo } from "./Web3Utils";
-import NetworkInfoComponent from "./NetworkInfo";
-import TetherContractInfoComponent from "./TetherContractInfo";
+import { NetworkInfo, TetherContractInfo } from "./web3-utils";
+import NetworkInfoComponent from "./network-info";
+import TetherContractInfoComponent from "./tether-contract-info";
 
 interface ConnectedAccountsProps {
   accounts: string[];

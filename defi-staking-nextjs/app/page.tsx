@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import AccountImporter from "./components/AccountImporter";
+import AccountImporter from "./components/account-importer";
 
 export default function Home() {
   const [error, setError] = useState<string>("");

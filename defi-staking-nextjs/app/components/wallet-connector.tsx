@@ -6,7 +6,7 @@ import {
   addGanacheNetwork,
   addCustomGanacheNetwork,
   getTetherContractInfo,
-} from "./Web3Utils";
+} from "./web3-utils";
 
 interface WalletConnectorProps {
   onConnect: (

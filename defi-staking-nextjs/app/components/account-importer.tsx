@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ImportedAccount, getAccountFromPrivateKey } from "./Web3Utils";
+import { ImportedAccount, getAccountFromPrivateKey } from "./web3-utils";
 
 interface AccountImporterProps {
   customRpcUrl: string;
