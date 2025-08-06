@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ImportedAccount, getAccountFromPrivateKey } from "./web3-utils";
+import { IImportedAccount, getAccountFromPrivateKey } from "./web3-utils";
 
 interface AccountImporterProps {
   customRpcUrl: string;
@@ -12,7 +12,7 @@ export default function AccountImporter({
 }: AccountImporterProps) {
   const [privateKey, setPrivateKey] = useState<string>("");
   const [importedAccount, setImportedAccount] =
-    useState<ImportedAccount | null>(null);
+    useState<IImportedAccount | null>(null);
 
   const importAccountFromPrivateKey = async () => {
     try {
