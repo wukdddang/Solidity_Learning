@@ -49,29 +49,35 @@ export default function EditorContent() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="h-screen bg-gray-50 flex flex-col overflow-hidden">
       {/* 툴바 */}
-      <EditorToolbar
-        showCodePanel={showCodePanel}
-        onToggleCodePanel={handleToggleCodePanel}
-      />
+      <div className="flex-shrink-0">
+        <EditorToolbar
+          showCodePanel={showCodePanel}
+          onToggleCodePanel={handleToggleCodePanel}
+        />
+      </div>
 
       {/* 메인 레이아웃 */}
       <div className="flex-1 flex overflow-hidden">
         {/* 왼쪽: 블록 라이브러리 */}
-        <BlockLibrary />
+        <div className="flex-shrink-0">
+          <BlockLibrary />
+        </div>
 
         {/* 중앙: 캔버스 */}
-        <div className="flex-1 flex flex-col">
+        <div className="flex-1 flex flex-col overflow-hidden">
           <EditorCanvas />
         </div>
 
         {/* 오른쪽: 설정 패널 또는 코드 뷰어 */}
-        {showCodePanel ? <CodeViewer /> : <BlockSettingsPanel />}
+        <div className="flex-shrink-0">
+          {showCodePanel ? <CodeViewer /> : <BlockSettingsPanel />}
+        </div>
       </div>
 
       {/* 하단 상태바 (선택사항) */}
-      <div className="bg-white border-t border-gray-200 px-4 py-2">
+      <div className="flex-shrink-0 bg-white border-t border-gray-200 px-4 py-2">
         <div className="flex items-center justify-between text-sm text-gray-600">
           <div className="flex items-center gap-4">
             <span>

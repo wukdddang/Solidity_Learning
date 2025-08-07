@@ -12,8 +12,30 @@ const config: Config = {
         background: "var(--background)",
         foreground: "var(--foreground)",
       },
+      // 스크롤바 관련 유틸리티 클래스 지원
+      spacing: {
+        "18": "4.5rem",
+        "88": "22rem",
+        "128": "32rem",
+      },
     },
   },
-  plugins: [],
+  plugins: [
+    // 커스텀 스크롤바 플러그인
+    function ({ addComponents }) {
+      addComponents({
+        ".scrollbar-hide": {
+          /* IE and Edge */
+          "-ms-overflow-style": "none",
+          /* Firefox */
+          "scrollbar-width": "none",
+          /* Safari and Chrome */
+          "&::-webkit-scrollbar": {
+            display: "none",
+          },
+        },
+      });
+    },
+  ],
 };
 export default config;

@@ -37,7 +37,7 @@ export default function BlockSettingsPanel() {
 
   if (!selectedNode) {
     return (
-      <div className="w-80 bg-white border-l border-gray-200 flex items-center justify-center">
+      <div className="w-80 bg-white border-l border-gray-200 flex items-center justify-center h-full">
         <div className="text-center p-6">
           <Settings className="h-12 w-12 text-gray-300 mx-auto mb-4" />
           <h3 className="text-lg font-medium text-gray-900 mb-2">설정 패널</h3>
@@ -128,7 +128,7 @@ export default function BlockSettingsPanel() {
   return (
     <div className="w-80 bg-white border-l border-gray-200 flex flex-col h-full">
       {/* 헤더 */}
-      <div className="p-4 border-b border-gray-200">
+      <div className="flex-shrink-0 p-4 border-b border-gray-200">
         <div className="flex items-center justify-between mb-2">
           <h2 className="text-lg font-semibold text-gray-900">블록 설정</h2>
           <button
@@ -155,7 +155,7 @@ export default function BlockSettingsPanel() {
       </div>
 
       {/* 설정 폼 */}
-      <div className="flex-1 overflow-y-auto p-4">
+      <div className="flex-1 overflow-y-auto scrollbar-thin p-4">
         <div className="space-y-4">
           {block.inputs.map((input) => (
             <div key={input.id} className="space-y-2">
@@ -190,7 +190,7 @@ export default function BlockSettingsPanel() {
 
       {/* 액션 버튼 */}
       {block.inputs.length > 0 && (
-        <div className="p-4 border-t border-gray-200">
+        <div className="flex-shrink-0 p-4 border-t border-gray-200">
           <div className="flex gap-2">
             <button
               onClick={handleClose}

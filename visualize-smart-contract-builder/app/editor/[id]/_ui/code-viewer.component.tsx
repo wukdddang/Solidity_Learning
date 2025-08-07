@@ -45,7 +45,7 @@ export default function CodeViewer() {
   return (
     <div className="w-96 bg-gray-900 text-gray-100 flex flex-col h-full">
       {/* 헤더 */}
-      <div className="p-4 border-b border-gray-700">
+      <div className="flex-shrink-0 p-4 border-b border-gray-700">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
             <Code className="h-5 w-5 text-blue-400" />
@@ -114,7 +114,7 @@ export default function CodeViewer() {
       {/* 코드 영역 */}
       <div className="flex-1 overflow-hidden">
         {generatedCode ? (
-          <div className="h-full overflow-auto">
+          <div className="h-full overflow-auto scrollbar-thin-dark">
             <pre className="p-4 text-sm font-mono leading-relaxed">
               <code className="text-gray-100 whitespace-pre-wrap">
                 {generatedCode}
@@ -153,7 +153,7 @@ export default function CodeViewer() {
       </div>
 
       {/* 푸터 정보 */}
-      <div className="p-4 border-t border-gray-700 bg-gray-800">
+      <div className="flex-shrink-0 p-4 border-t border-gray-700 bg-gray-800">
         <div className="flex items-center gap-2 text-xs text-gray-400">
           <AlertTriangle className="h-3 w-3" />
           <span>OpenZeppelin 표준 라이브러리 기반</span>

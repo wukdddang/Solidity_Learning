@@ -19,7 +19,7 @@ interface BlockTemplate {
   name: string;
   description: string;
   category: "basic" | "function" | "access" | "variable";
-  icon: React.ComponentType<any>;
+  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
 }
 
 const blockTemplates: BlockTemplate[] = [
@@ -111,7 +111,7 @@ export default function BlockLibrary() {
   return (
     <div className="w-80 bg-white border-r border-gray-200 flex flex-col h-full">
       {/* 헤더 */}
-      <div className="p-4 border-b border-gray-200">
+      <div className="flex-shrink-0 p-4 border-b border-gray-200">
         <h2 className="text-lg font-semibold text-gray-900 mb-4">
           블록 라이브러리
         </h2>
@@ -146,7 +146,7 @@ export default function BlockLibrary() {
       </div>
 
       {/* 블록 목록 */}
-      <div className="flex-1 overflow-y-auto p-4">
+      <div className="flex-1 overflow-y-auto scrollbar-thin p-4">
         <div className="space-y-3">
           {filteredBlocks.map((block) => {
             const IconComponent = block.icon;
@@ -198,7 +198,7 @@ export default function BlockLibrary() {
       </div>
 
       {/* 도움말 */}
-      <div className="p-4 border-t border-gray-200 bg-gray-50">
+      <div className="flex-shrink-0 p-4 border-t border-gray-200 bg-gray-50">
         <div className="text-xs text-gray-600">
           <p className="mb-1">
             💡 <strong>사용법:</strong>
