@@ -43,8 +43,8 @@ export default function TemplateCard({
   const ComplexityIcon = complexity.icon;
 
   return (
-    <div className="bg-white rounded-xl border-2 border-gray-200 hover:border-blue-300 transition-all duration-200 hover:shadow-lg group">
-      <div className="p-6">
+    <div className="bg-white rounded-xl border-2 border-gray-200 hover:border-blue-300 transition-all duration-200 hover:shadow-lg group flex flex-col h-full">
+      <div className="p-6 flex flex-col flex-1">
         {/* 아이콘과 제목 */}
         <div className="flex items-start gap-4 mb-4">
           <div className="text-4xl">{template.icon}</div>
@@ -73,7 +73,7 @@ export default function TemplateCard({
         </div>
 
         {/* 주요 기능 */}
-        <div className="mb-6">
+        <div className="mb-6 flex-1">
           <h4 className="text-sm font-medium text-gray-700 mb-2">
             포함된 기능:
           </h4>
@@ -98,7 +98,7 @@ export default function TemplateCard({
         {/* 액션 버튼 */}
         <button
           onClick={() => onSelectTemplate(template)}
-          className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2 group-hover:bg-blue-700"
+          className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2 group-hover:bg-blue-700 mt-auto"
         >
           이 템플릿 사용하기
           <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
@@ -106,17 +106,7 @@ export default function TemplateCard({
       </div>
 
       {/* 카드 하단 표시줄 */}
-      <div
-        className={`h-1 bg-gradient-to-r ${
-          template.type === "ERC721"
-            ? "from-pink-400 to-purple-500"
-            : template.type === "ERC20"
-            ? "from-blue-400 to-indigo-500"
-            : template.type === "VOTING"
-            ? "from-green-400 to-teal-500"
-            : "from-gray-400 to-gray-500"
-        } rounded-b-xl`}
-      />
+      <div className="h-1 bg-gradient-to-r from-gray-300 to-gray-400 rounded-b-xl" />
     </div>
   );
 }
