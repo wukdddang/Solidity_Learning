@@ -7,7 +7,6 @@ import {
   Zap,
   Shield,
   Code,
-  Rocket,
   Users,
   HelpCircle,
   ExternalLink,

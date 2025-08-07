@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useEditor } from "../_context/editor.context";
 import {
   Copy,
@@ -136,8 +136,8 @@ export default function CodeViewer() {
                     코드가 생성되지 않았습니다
                   </h3>
                   <p className="text-sm text-gray-500 mb-4">
-                    블록을 배치하고 '컴파일 및 검증' 버튼을 누르면 여기에
-                    솔리디티 코드가 표시됩니다
+                    블록을 배치하고 &apos;컴파일 및 검증&apos; 버튼을 누르면
+                    여기에 솔리디티 코드가 표시됩니다
                   </p>
                   <button
                     onClick={handleRefresh}
