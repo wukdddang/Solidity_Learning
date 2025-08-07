@@ -1,4 +1,6 @@
-pragma solidity ^0.5.0;
+// SPDX-License-Identifier: MIT
+
+pragma solidity ^0.7.0;
 
 contract Tether {
   string public name = 'Tether';
@@ -23,7 +25,7 @@ contract Tether {
   mapping(address => uint) public balanceOf;
   mapping(address => mapping(address => uint)) public allowance;
 
-  constructor() public {
+  constructor()  {
     balanceOf[msg.sender] = totalSupply;
   }
 

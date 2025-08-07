@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ImportedAccount, getAccountFromPrivateKey } from "./Web3Utils";
+import { IImportedAccount, getAccountFromPrivateKey } from "./web3-utils";
 
 interface AccountImporterProps {
   customRpcUrl: string;
@@ -12,7 +12,7 @@ export default function AccountImporter({
 }: AccountImporterProps) {
   const [privateKey, setPrivateKey] = useState<string>("");
   const [importedAccount, setImportedAccount] =
-    useState<ImportedAccount | null>(null);
+    useState<IImportedAccount | null>(null);
 
   const importAccountFromPrivateKey = async () => {
     try {
@@ -85,6 +85,9 @@ export default function AccountImporter({
               <p className="text-green-700">
                 <strong>테더 잔액:</strong> {importedAccount.tetherBalance} USDT
               </p>
+              <p className="text-green-700">
+                <strong>리워드 잔액:</strong> {importedAccount.rwdBalance} RWD
+              </p>
             </div>
             <div className="mt-2 p-2 bg-yellow-100 border border-yellow-300 rounded text-xs">
               <p className="text-yellow-800">
@@ -100,8 +103,8 @@ export default function AccountImporter({
         )}
 
         <p className="text-xs text-blue-600">
-          Ganache 계정의 비밀키를 입력하면 해당 계정의 ETH 잔액과 테더(USDT)
-          잔액을 확인할 수 있습니다
+          Ganache 계정의 비밀키를 입력하면 해당 계정의 ETH 잔액, 테더(USDT)
+          잔액, 리워드(RWD) 잔액을 확인할 수 있습니다
         </p>
       </div>
     </div>
