@@ -3,7 +3,7 @@
 import { memo } from "react";
 import { Handle, Position, NodeProps } from "reactflow";
 import { useEditor } from "../_context/editor.context";
-import { ContractBlock } from "@/types/contract";
+import { ContractBlock, BlockConfig } from "@/types/contract";
 import {
   Settings,
   Trash2,
@@ -18,7 +18,7 @@ interface CustomBlockNodeData {
   block: ContractBlock;
   label: string;
   type: string;
-  config: Record<string, any>;
+  config: BlockConfig;
 }
 
 const getBlockIcon = (type: string) => {

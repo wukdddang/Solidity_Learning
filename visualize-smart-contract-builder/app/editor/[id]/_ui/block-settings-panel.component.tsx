@@ -3,11 +3,12 @@
 import { useState, useEffect } from "react";
 import { useEditor } from "../_context/editor.context";
 import { Settings, X, Save, AlertCircle, Info } from "lucide-react";
+import { BlockConfig, BlockConfigValue, BlockInput } from "@/types/contract";
 
 export default function BlockSettingsPanel() {
   const { selectedNode, 블록_설정을_업데이트_한다, setSelectedNode } =
     useEditor();
-  const [config, setConfig] = useState<Record<string, any>>({});
+  const [config, setConfig] = useState<BlockConfig>({});
   const [hasChanges, setHasChanges] = useState(false);
 
   // 선택된 노드가 변경될 때 설정 로드
@@ -18,7 +19,7 @@ export default function BlockSettingsPanel() {
     }
   }, [selectedNode]);
 
-  const handleConfigChange = (key: string, value: any) => {
+  const handleConfigChange = (key: string, value: BlockConfigValue) => {
     setConfig((prev) => ({ ...prev, [key]: value }));
     setHasChanges(true);
   };
@@ -51,15 +52,15 @@ export default function BlockSettingsPanel() {
 
   const block = selectedNode.data.block;
 
-  const renderInputField = (input: any) => {
-    const value = config[input.id] || input.defaultValue || "";
+  const renderInputField = (input: BlockInput) => {
+    const value = config[input.id] ?? input.defaultValue ?? "";
 
     switch (input.type) {
       case "string":
         return (
           <input
             type="text"
-            value={value}
+            value={String(value)}
             onChange={(e) => handleConfigChange(input.id, e.target.value)}
             placeholder={`${input.name} 입력...`}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -71,7 +72,7 @@ export default function BlockSettingsPanel() {
         return (
           <input
             type="number"
-            value={value}
+            value={Number(value)}
             onChange={(e) =>
               handleConfigChange(input.id, Number(e.target.value))
             }
@@ -86,7 +87,7 @@ export default function BlockSettingsPanel() {
           <div className="flex items-center">
             <input
               type="checkbox"
-              checked={value}
+              checked={Boolean(value)}
               onChange={(e) => handleConfigChange(input.id, e.target.checked)}
               className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
             />
@@ -97,13 +98,13 @@ export default function BlockSettingsPanel() {
       case "select":
         return (
           <select
-            value={value}
+            value={String(value)}
             onChange={(e) => handleConfigChange(input.id, e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             required={input.required}
           >
             <option value="">선택하세요</option>
-            {input.options?.map((option: any) => (
+            {input.options?.map((option) => (
               <option key={option.value} value={option.value}>
                 {option.label}
               </option>
@@ -115,7 +116,7 @@ export default function BlockSettingsPanel() {
         return (
           <input
             type="text"
-            value={value}
+            value={String(value)}
             onChange={(e) => handleConfigChange(input.id, e.target.value)}
             placeholder={`${input.name} 입력...`}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -157,7 +158,7 @@ export default function BlockSettingsPanel() {
       {/* 설정 폼 */}
       <div className="flex-1 overflow-y-auto scrollbar-thin p-4">
         <div className="space-y-4">
-          {block.inputs.map((input) => (
+          {block.inputs.map((input: BlockInput) => (
             <div key={input.id} className="space-y-2">
               <label className="block text-sm font-medium text-gray-700">
                 {input.name}

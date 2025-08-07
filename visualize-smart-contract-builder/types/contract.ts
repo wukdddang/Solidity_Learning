@@ -21,7 +21,7 @@ export interface ContractBlock {
   category: BlockCategory;
   inputs: BlockInput[];
   outputs: BlockOutput[];
-  config: Record<string, any>;
+  config: BlockConfig;
   position?: { x: number; y: number };
 }
 
@@ -44,15 +44,25 @@ export type BlockCategory =
 export interface BlockInput {
   id: string;
   name: string;
-  type: string;
+  type: "string" | "number" | "boolean" | "select";
   required: boolean;
-  defaultValue?: any;
+  defaultValue?: string | number | boolean;
+  description?: string;
+  options?: { value: string; label: string }[];
 }
 
 export interface BlockOutput {
   id: string;
   name: string;
   type: string;
+}
+
+// 블록 설정 값 타입
+export type BlockConfigValue = string | number | boolean;
+
+// 블록 설정 타입
+export interface BlockConfig {
+  [key: string]: BlockConfigValue;
 }
 
 export interface ContractProject {
@@ -90,7 +100,7 @@ export interface DeploymentConfig {
   network: string;
   gasLimit?: number;
   gasPrice?: string;
-  constructorArgs?: any[];
+  constructorArgs?: unknown[];
 }
 
 export interface DeploymentResult {

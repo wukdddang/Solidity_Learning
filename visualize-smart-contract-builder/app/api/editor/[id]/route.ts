@@ -1,12 +1,19 @@
 import { NextResponse } from "next/server";
 import { ContractProject } from "@/types/contract";
 import { ApiResponse } from "@/types/api";
+import { BlockLibraryData } from "@/types/block-library";
 
-// 에디터용 프로젝트 상세 조회
+// 에디터 초기 데이터 타입 정의
+interface EditorInitialData {
+  project: ContractProject;
+  blockLibrary: BlockLibraryData;
+}
+
+// 에디터용 프로젝트 상세 조회 (블록 라이브러리 데이터 포함)
 export async function GET(
   request: Request,
   { params }: { params: { id: string } }
-): Promise<NextResponse<ApiResponse<ContractProject>>> {
+): Promise<NextResponse<ApiResponse<EditorInitialData>>> {
   try {
     const { id } = params;
 
@@ -17,7 +24,10 @@ export async function GET(
       );
     }
 
-    // TODO: 실제 데이터베이스에서 조회하도록 변경
+    // TODO: 실제 백엔드 서비스 레이어 호출로 변경
+    // 예시: const project = await projectService.getProjectById(id);
+    // 예시: const blockLibrary = await blockLibraryService.getBlockLibrary();
+
     const mockProject: ContractProject = {
       id,
       name: "내 첫 NFT 프로젝트",
@@ -54,9 +64,72 @@ export async function GET(
       updatedAt: new Date().toISOString(),
     };
 
+    // 블록 라이브러리 데이터
+    const mockBlockLibrary: BlockLibraryData = {
+      blockTemplates: [
+        {
+          id: "contract-info",
+          type: "CONTRACT_INFO",
+          name: "컨트랙트 정보",
+          description: "컨트랙트 기본 정보 설정",
+          category: "basic",
+          icon: "FileText",
+        },
+        {
+          id: "mint-function",
+          type: "MINT_FUNCTION",
+          name: "새로 만들기 기능",
+          description: "NFT나 토큰을 새로 만드는 기능",
+          category: "function",
+          icon: "Plus",
+        },
+        {
+          id: "burn-function",
+          type: "BURN_FUNCTION",
+          name: "소각 기능",
+          description: "NFT나 토큰을 소각하는 기능",
+          category: "function",
+          icon: "Zap",
+        },
+        {
+          id: "access-control",
+          type: "ACCESS_CONTROL",
+          name: "접근 제어",
+          description: "특정 조건에서만 실행 가능하게 제한",
+          category: "access",
+          icon: "Shield",
+        },
+        {
+          id: "variable",
+          type: "VARIABLE",
+          name: "변수",
+          description: "컨트랙트에서 사용할 변수 정의",
+          category: "variable",
+          icon: "Settings",
+        },
+      ],
+      categoryLabels: {
+        basic: "기본 정보",
+        function: "기능 블록",
+        access: "접근 제어",
+        variable: "변수",
+      },
+      categoryColors: {
+        basic: "text-blue-600 bg-blue-50 border-blue-200",
+        function: "text-green-600 bg-green-50 border-green-200",
+        access: "text-purple-600 bg-purple-50 border-purple-200",
+        variable: "text-orange-600 bg-orange-50 border-orange-200",
+      },
+    };
+
+    const editorInitialData: EditorInitialData = {
+      project: mockProject,
+      blockLibrary: mockBlockLibrary,
+    };
+
     return NextResponse.json({
       success: true,
-      data: mockProject,
+      data: editorInitialData,
     });
   } catch (error) {
     console.error("에디터 프로젝트 조회 중 오류 발생:", error);
@@ -83,7 +156,8 @@ export async function PUT(
       );
     }
 
-    // TODO: 실제 데이터베이스 업데이트 로직
+    // TODO: 실제 백엔드 서비스 레이어 호출로 변경
+    // 예시: const updatedProject = await projectService.updateProject(id, body);
     const updatedProject: ContractProject = {
       ...body,
       id,

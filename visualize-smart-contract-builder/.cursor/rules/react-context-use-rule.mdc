@@ -47,61 +47,102 @@ src/app/(planning)/plan/(user)/user/{page-name}/
 
 ## 3. Context 구조
 
+### Context와 Route Handler 연결
+
+Context는 Route Handler에 연결하여 데이터를 받아오고, 이를 value로 반환합니다:
+
+1. **Context**: Route Handler API를 호출하여 데이터를 가져옴
+2. **Route Handler**: 백엔드 서비스 레이어를 호출하여 필요한 모든 데이터를 한 번에 조회
+3. **백엔드 서비스 레이어**: 스웨거 문서와 1:1 매핑되는 API 호출 클래스
+4. **컴포넌트**: Context의 커스텀 훅을 호출하여 데이터 사용
+
+### 데이터 흐름
+
+```
+백엔드 API ← 백엔드 서비스 레이어 ← Route Handler ← Context (API 호출) → 컴포넌트 (훅 사용)
+```
+
+### Route Handler 설계 원칙
+
+1. **한 번에 필요한 모든 데이터 조회**: 페이지 렌더링에 필요한 모든 데이터를 한 번의 API 호출로 가져옴
+2. **백엔드 서비스 레이어 활용**: 스웨거 문서와 매핑되는 서비스 클래스를 통해 백엔드 API 호출
+3. **Context 단순화**: Context에서는 Route Handler를 한 번만 호출하여 모든 데이터를 로드
+
 ### 상태 그룹화
 
 ```typescript
 interface ContextType {
-  // 데이터 상태
-  dataItems: DataType[];
+  // 데이터 상태 (Route Handler에서 받은 모든 데이터)
+  pageData: PageDataType | null;
+  relatedData: RelatedDataType[];
   loading: boolean;
   error: string | null;
 
-  // 액션 함수들
-  데이터를_조회_한다: () => Promise<void>;
+  // 액션 함수들 (Route Handler 호출)
+  페이지_초기_데이터를_로드_한다: (id: string) => Promise<void>;
   데이터를_제출_한다: (data: DataType) => Promise<boolean>;
 
   // 상태 업데이트 함수들
-  setDataItems: React.Dispatch<React.SetStateAction<DataType[]>>;
+  setPageData: React.Dispatch<React.SetStateAction<PageDataType | null>>;
 }
 ```
 
 ### Provider 구조
 
 ```typescript
-export const PageProvider: React.FC<PageProviderProps> = ({ children }) => {
-  // 데이터 상태
-  const [dataItems, setDataItems] = useState<DataType[]>([]);
+export const PageProvider: React.FC<PageProviderProps> = ({
+  children,
+  pageId,
+}) => {
+  // 데이터 상태 (Route Handler에서 받은 모든 데이터를 저장)
+  const [pageData, setPageData] = useState<PageDataType | null>(null);
+  const [relatedData, setRelatedData] = useState<RelatedDataType[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // 액션 함수들
-  const 데이터를_조회_한다 = async () => {
+  // 액션 함수들 (Route Handler API 호출)
+  const 페이지_초기_데이터를_로드_한다 = async (pageId: string) => {
     setLoading(true);
     setError(null);
 
     try {
-      // API 호출 로직
+      // Route Handler API 호출 - 필요한 모든 데이터를 한 번에 가져옴
+      const response = await fetch(`/api/plan/page-name/${pageId}`);
+      const result = await response.json();
+
+      if (result.success && result.data) {
+        const { pageData, relatedData } = result.data;
+
+        setPageData(pageData); // 메인 데이터 설정
+        setRelatedData(relatedData); // 관련 데이터 설정
+      } else {
+        throw new Error(result.error || "페이지 데이터를 불러올 수 없습니다.");
+      }
     } catch (err) {
       setError(
         err instanceof Error ? err.message : "알 수 없는 오류가 발생했습니다."
       );
-      console.error("API 호출 오류:", err);
+      console.error("페이지 초기 데이터 로드 오류:", err);
     } finally {
       setLoading(false);
     }
   };
 
-  // 컴포넌트 마운트 시 데이터 로드
+  // 컴포넌트 마운트 시 Route Handler에서 모든 데이터 로드
   useEffect(() => {
-    데이터를_조회_한다();
-  }, []);
+    if (pageId) {
+      페이지_초기_데이터를_로드_한다(pageId);
+    }
+  }, [pageId]);
 
+  // Context value로 Route Handler 데이터와 액션 함수들 제공
   const contextValue: ContextType = {
-    dataItems,
-    loading,
-    error,
-    데이터를_조회_한다,
-    setDataItems,
+    pageData, // Route Handler에서 받은 메인 데이터
+    relatedData, // Route Handler에서 받은 관련 데이터
+    loading, // API 호출 상태
+    error, // 에러 상태
+    페이지_초기_데이터를_로드_한다, // Route Handler 호출 함수
+    setPageData, // 데이터 업데이트 함수
   };
 
   return <Context.Provider value={contextValue}>{children}</Context.Provider>;
@@ -122,35 +163,36 @@ export const PageProvider: React.FC<PageProviderProps> = ({ children }) => {
 
 ```typescript
 function PageContent() {
+  // Context의 커스텀 훅을 호출하여 Route Handler에서 받은 데이터 사용
   const {
-    dataItems,
-    loading,
-    데이터를_조회_한다,
-    setDataItems,
+    dataItems,        // Route Handler에서 받은 데이터
+    loading,          // API 호출 상태
+    데이터를_조회_한다, // Route Handler 호출 함수
+    setDataItems,     // 데이터 업데이트 함수
   } = usePageContext();
 
-  // 페이지 상태들
+  // 페이지 UI 상태들 (Context와 분리)
   const [selectedYear, setSelectedYear] = useState(currentYear);
   const [selectedHalf, setSelectedHalf] = useState<"first" | "second">(currentHalf);
 
-  // 페이지 상태 변경 시 데이터 재로드
+  // 페이지 상태 변경 시 Route Handler 재호출
   useEffect(() => {
     데이터를_조회_한다(selectedYear, selectedHalf);
   }, [selectedYear, selectedHalf, 데이터를_조회_한다]);
 
-  // 핸들러 함수들
+  // UI 상호작용 핸들러
   const handleDataChange = useCallback((id: string, value: string) => {
     setDataItems(prev => ({ ...prev, [id]: value }));
   }, [setDataItems]);
 
   return (
-    // JSX
+    // JSX - Route Handler에서 받은 데이터를 렌더링
   );
 }
 
 export default function Page() {
   return (
-    <PageProvider>
+    <PageProvider>  {/* Context Provider로 Route Handler 데이터 제공 */}
       <PageContent />
     </PageProvider>
   );
@@ -163,7 +205,7 @@ export default function Page() {
 
 - `use{PageName}` 형태
 - 예시: `useSelfEvaluation`, `useProjectManagement`
-- 파일명: `use-{hook-name}.ts` 형태
+- 파일명: `use{HookName}.ts` 형태
 
 ### 에러 처리
 
@@ -173,8 +215,30 @@ export const usePage = () => {
   if (context === undefined) {
     throw new Error("usePage must be used within a PageProvider");
   }
-  return context;
+  return context; // Route Handler에서 받은 데이터와 액션 함수들 반환
 };
+```
+
+### 사용 예시
+
+```typescript
+// 컴포넌트에서 Context 훅 사용
+function MyComponent() {
+  const { pageData, relatedData, loading, 페이지_초기_데이터를_로드_한다 } =
+    usePage();
+
+  // Route Handler에서 받은 데이터 사용
+  if (loading) return <div>로딩 중...</div>;
+
+  return (
+    <div>
+      {pageData && <div>{pageData.title}</div>}
+      {relatedData.map((item) => (
+        <div key={item.id}>{item.name}</div>
+      ))}
+    </div>
+  );
+}
 ```
 
 ## 6. UI 컴포넌트 구조
