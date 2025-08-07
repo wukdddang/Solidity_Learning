@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useEditor } from "../_context/editor.context";
 import EditorToolbar from "./editor-toolbar.component";
-import BlockLibrary from "./block-library.component";
+import BlockLibraryPanel from "./block-library.panel";
 import EditorCanvas from "./editor-canvas.component";
 import BlockSettingsPanel from "./block-settings-panel.component";
 import CodeViewer from "./code-viewer.component";
@@ -62,7 +62,7 @@ export default function EditorContent() {
       <div className="flex-1 flex overflow-hidden">
         {/* 왼쪽: 블록 라이브러리 */}
         <div className="flex-shrink-0">
-          <BlockLibrary />
+          <BlockLibraryPanel />
         </div>
 
         {/* 중앙: 캔버스 */}

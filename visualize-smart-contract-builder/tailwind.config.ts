@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss";
+import plugin from "tailwindcss/plugin";
 
 const config: Config = {
   content: [
@@ -22,7 +23,7 @@ const config: Config = {
   },
   plugins: [
     // 커스텀 스크롤바 플러그인
-    function ({ addComponents }) {
+    plugin(function ({ addComponents }) {
       addComponents({
         ".scrollbar-hide": {
           /* IE and Edge */
@@ -35,7 +36,7 @@ const config: Config = {
           },
         },
       });
-    },
+    }),
   ],
 };
 export default config;

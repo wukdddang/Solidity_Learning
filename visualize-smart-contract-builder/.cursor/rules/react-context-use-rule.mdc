@@ -232,6 +232,25 @@ if (result.success) {
 
 ## 8. API 라우트 작성 규칙
 
+### 페이지 경로와 API 경로 일관성
+
+페이지 경로와 API 경로는 일관성을 유지해야 합니다:
+
+- **페이지 URL**: `/plan/admin/department-management`
+- **API URL**: `/api/admin/department-management`
+
+### 경로 매핑 규칙
+
+```
+페이지 경로: /plan/{module}/{page-name}
+API 경로:  /api/{module}/{page-name}
+
+예시:
+- 페이지: /plan/admin/department-management → API: /api/admin/department-management
+- 페이지: /plan/user/all-projects → API: /api/plan/all-projects
+- 페이지: /plan/user/self-evaluation → API: /api/plan/self-evaluation
+```
+
 ### 라우트 구조
 
 - **목록 조회**: `/api/{module}/{page}/mount/route.ts`

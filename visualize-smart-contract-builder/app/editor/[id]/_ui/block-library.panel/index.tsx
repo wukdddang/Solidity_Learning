@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useEditor } from "../_context/editor.context";
+import { useEditor } from "../../_context/editor.context";
 import {
   Search,
   Filter,
@@ -51,7 +51,7 @@ const blockTemplates: BlockTemplate[] = [
     id: "access-control",
     type: "ACCESS_CONTROL",
     name: "접근 제어",
-    description: "소유자만 실행 가능하게 설정",
+    description: "특정 조건에서만 실행 가능하게 제한",
     category: "access",
     icon: Shield,
   },
@@ -59,7 +59,7 @@ const blockTemplates: BlockTemplate[] = [
     id: "variable",
     type: "VARIABLE",
     name: "변수",
-    description: "가격, 최대 발행량 등 변수 설정",
+    description: "컨트랙트에서 사용할 변수 정의",
     category: "variable",
     icon: Settings,
   },
@@ -79,7 +79,7 @@ const categoryColors = {
   variable: "text-orange-600 bg-orange-50 border-orange-200",
 };
 
-export default function BlockLibrary() {
+export default function BlockLibraryPanel() {
   const { 블록을_추가_한다 } = useEditor();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");

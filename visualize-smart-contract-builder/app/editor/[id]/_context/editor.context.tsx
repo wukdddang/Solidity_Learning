@@ -71,7 +71,7 @@ export const EditorProvider: React.FC<{
     setError(null);
 
     try {
-      const response = await fetch(`/api/projects/${projectId}`);
+      const response = await fetch(`/api/editor/${projectId}`);
       const result: ApiResponse<ContractProject> = await response.json();
 
       if (result.success && result.data) {
@@ -148,7 +148,7 @@ export const EditorProvider: React.FC<{
         updatedAt: new Date().toISOString(),
       };
 
-      const response = await fetch(`/api/projects/${project.id}`, {
+      const response = await fetch(`/api/editor/${project.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -195,13 +195,12 @@ export const EditorProvider: React.FC<{
         targetInputId: edge.targetHandle || "",
       }));
 
-      const response = await fetch("/api/contracts/compile", {
+      const response = await fetch(`/api/editor/${project.id}/compile`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          projectId: project.id,
           blocks,
           connections,
         }),
