@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { useDeployed } from "../_context/deployed.context";
 import { formatAddress } from "@/lib/utils";
@@ -28,7 +28,7 @@ export default function DeployedContent() {
 
   const [copied, setCopied] = useState(false);
   const [interactionResults, setInteractionResults] = useState<
-    Record<string, any>
+    Record<string, unknown>
   >({});
 
   const handleCopyAddress = async () => {
@@ -39,7 +39,7 @@ export default function DeployedContent() {
     }
   };
 
-  const handleInteraction = async (functionName: string, args?: any[]) => {
+  const handleInteraction = async (functionName: string, args?: unknown[]) => {
     const result = await 컨트랙트와_상호작용_한다(functionName, args);
     if (result !== null) {
       setInteractionResults((prev) => ({ ...prev, [functionName]: result }));
@@ -206,7 +206,7 @@ export default function DeployedContent() {
                     </button>
                   </div>
 
-                  {interactionResults[functionName] && (
+                  {interactionResults[functionName] !== undefined && (
                     <div className="mt-2 p-2 bg-gray-50 rounded text-sm">
                       <span className="text-gray-600">결과: </span>
                       <code className="text-gray-900">

@@ -1,13 +1,30 @@
 import { NextResponse } from "next/server";
 import { ApiResponse } from "@/types/api";
 
+// ABI 타입 정의
+interface ContractABI {
+  inputs: Array<{
+    name?: string;
+    type: string;
+    internalType?: string;
+  }>;
+  name: string;
+  outputs?: Array<{
+    name?: string;
+    type: string;
+    internalType?: string;
+  }>;
+  stateMutability: "pure" | "view" | "nonpayable" | "payable";
+  type: "function" | "constructor" | "fallback" | "receive" | "event";
+}
+
 // 컨트랙트 컴파일
 export async function POST(
   request: Request
-): Promise<NextResponse<ApiResponse<{ code: string; abi: any[] }>>> {
+): Promise<NextResponse<ApiResponse<{ code: string; abi: ContractABI[] }>>> {
   try {
     const body = await request.json();
-    const { projectId, blocks, connections } = body;
+    const { projectId, blocks } = body;
 
     if (!projectId || !blocks) {
       return NextResponse.json(
@@ -45,7 +62,7 @@ contract MyNFT is ERC721, Ownable {
     }
 }`;
 
-    const mockABI = [
+    const mockABI: ContractABI[] = [
       {
         inputs: [],
         name: "mint",

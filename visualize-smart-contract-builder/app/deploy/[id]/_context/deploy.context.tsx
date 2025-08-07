@@ -14,15 +14,17 @@ import {
 } from "@/types/contract";
 import { ApiResponse } from "@/types/api";
 
+interface GasEstimate {
+  gasLimit: number;
+  gasPrice: string;
+  estimatedCost: string;
+  network: string;
+}
+
 interface DeployContextType {
   // 데이터 상태
   project: ContractProject | null;
-  gasEstimate: {
-    gasLimit: number;
-    gasPrice: string;
-    estimatedCost: string;
-    network: string;
-  } | null;
+  gasEstimate: GasEstimate | null;
   loading: boolean;
   error: string | null;
   isDeploying: boolean;
@@ -37,7 +39,7 @@ interface DeployContextType {
 
   // 상태 업데이트 함수들
   setProject: React.Dispatch<React.SetStateAction<ContractProject | null>>;
-  setGasEstimate: React.Dispatch<React.SetStateAction<any>>;
+  setGasEstimate: React.Dispatch<React.SetStateAction<GasEstimate | null>>;
 }
 
 const DeployContext = createContext<DeployContextType | undefined>(undefined);
@@ -48,7 +50,7 @@ export const DeployProvider: React.FC<{
 }> = ({ children, projectId }) => {
   // 데이터 상태
   const [project, setProject] = useState<ContractProject | null>(null);
-  const [gasEstimate, setGasEstimate] = useState<any>(null);
+  const [gasEstimate, setGasEstimate] = useState<GasEstimate | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isDeploying, setIsDeploying] = useState(false);

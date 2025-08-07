@@ -10,7 +10,7 @@ export async function POST(
   try {
     const { id } = params;
     const body = await request.json();
-    const { network, gasLimit, gasPrice, constructorArgs } = body;
+    const { network } = body;
 
     if (!id) {
       return NextResponse.json(

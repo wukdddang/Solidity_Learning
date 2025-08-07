@@ -5,7 +5,6 @@ import { useState } from "react";
 import {
   Blocks,
   HelpCircle,
-  ArrowRight,
   Search,
   Plus,
   Minus,

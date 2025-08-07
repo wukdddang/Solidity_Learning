@@ -21,8 +21,8 @@ interface DeployedContextType {
   프로젝트를_로드_한다: (projectId: string) => Promise<void>;
   컨트랙트와_상호작용_한다: (
     functionName: string,
-    args?: any[]
-  ) => Promise<any>;
+    args?: unknown[]
+  ) => Promise<unknown>;
 
   // 상태 업데이트 함수들
   setProject: React.Dispatch<React.SetStateAction<ContractProject | null>>;
@@ -75,7 +75,7 @@ export const DeployedProvider: React.FC<{
 
   // 컨트랙트 상호작용 (Mock 구현)
   const 컨트랙트와_상호작용_한다 = useCallback(
-    async (functionName: string, args?: any[]): Promise<any> => {
+    async (functionName: string): Promise<unknown> => {
       if (!project?.deployedAddress) return null;
 
       setIsInteracting(true);
@@ -86,7 +86,7 @@ export const DeployedProvider: React.FC<{
         // 지금은 Mock 응답
         await new Promise((resolve) => setTimeout(resolve, 1000)); // 로딩 시뮬레이션
 
-        const mockResults: Record<string, any> = {
+        const mockResults: Record<string, unknown> = {
           name: "MyEpicNFT",
           symbol: "EPIC",
           totalSupply: "42",
