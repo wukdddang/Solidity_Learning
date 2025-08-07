@@ -7,8 +7,8 @@ import {
   stakeTokens,
   unstakeTokens,
   getTetherBalance,
-  IStakingInfo,
-} from "./web3-utils";
+  getAccountAddress,
+} from "../web3";
 
 interface StakingManagerProps {
   customRpcUrl: string;
@@ -24,7 +24,7 @@ export default function StakingManager({
   const [accountInfo, setAccountInfo] = useState<{
     address: string;
     tetherBalance: string;
-    stakingInfo: IStakingInfo | null;
+    stakingInfo: any;
   } | null>(null);
   const [loading, setLoading] = useState(false);
   const [transactionHash, setTransactionHash] = useState("");
@@ -39,27 +39,19 @@ export default function StakingManager({
       onError("");
 
       // 비밀키로 계정 주소 생성
-      const Web3 = (await import("web3")).default;
-      let cleanPrivateKey = privateKey.trim();
-      if (cleanPrivateKey.startsWith("0x")) {
-        cleanPrivateKey = cleanPrivateKey.substring(2);
-      }
-      const tempWeb3 = new Web3();
-      const account = tempWeb3.eth.accounts.privateKeyToAccount(
-        "0x" + cleanPrivateKey
-      );
+      const accountAddress = getAccountAddress(privateKey);
 
       // Tether 잔액 조회
       const tetherBalance = await getTetherBalance(
-        account.address,
+        accountAddress,
         customRpcUrl
       );
 
       // 스테이킹 정보 조회
-      const stakingInfo = await getStakingInfo(account.address, customRpcUrl);
+      const stakingInfo = await getStakingInfo(accountAddress, customRpcUrl);
 
       setAccountInfo({
-        address: account.address,
+        address: accountAddress,
         tetherBalance,
         stakingInfo,
       });

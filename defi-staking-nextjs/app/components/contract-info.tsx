@@ -1,12 +1,11 @@
+"use client";
+
 import { useState, useEffect } from "react";
 import {
   getTetherContractInfo,
   getRWDContractInfo,
   getDecentralBankInfo,
-  ITetherContractInfo,
-  IRWDContractInfo,
-  IDecentralBankInfo,
-} from "./web3-utils";
+} from "../web3";
 
 interface ContractInfoProps {
   customRpcUrl: string;
@@ -17,20 +16,16 @@ export default function ContractInfo({
   customRpcUrl,
   onError,
 }: ContractInfoProps) {
-  const [tetherInfo, setTetherInfo] = useState<ITetherContractInfo | null>(
-    null
-  );
-  const [rwdInfo, setRwdInfo] = useState<IRWDContractInfo | null>(null);
-  const [decentralBankInfo, setDecentralBankInfo] =
-    useState<IDecentralBankInfo | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [tetherInfo, setTetherInfo] = useState<any>(null);
+  const [rwdInfo, setRwdInfo] = useState<any>(null);
+  const [decentralBankInfo, setDecentralBankInfo] = useState<any>(null);
+  const [loading, setLoading] = useState(false);
 
   const loadContractInfo = async () => {
-    setIsLoading(true);
-    onError(""); // 에러 클리어
-
     try {
-      // 모든 컨트랙트 정보를 병렬로 로드
+      setLoading(true);
+      onError("");
+
       const [tether, rwd, decentralBank] = await Promise.all([
         getTetherContractInfo(customRpcUrl),
         getRWDContractInfo(customRpcUrl),
@@ -40,152 +35,123 @@ export default function ContractInfo({
       setTetherInfo(tether);
       setRwdInfo(rwd);
       setDecentralBankInfo(decentralBank);
-
-      console.log("✅ 모든 컨트랙트 정보 로드 완료!");
-    } catch (err: any) {
-      console.error("컨트랙트 정보 로드 오류:", err);
-      onError(`컨트랙트 정보 로드에 실패했습니다: ${err.message}`);
+    } catch (error: any) {
+      onError(`컨트랙트 정보 조회 실패: ${error.message}`);
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
-  // 주소를 짧게 표시하는 함수
-  const shortenAddress = (address: string) => {
-    return `${address.slice(0, 6)}...${address.slice(-4)}`;
-  };
-
   useEffect(() => {
-    // RPC URL이 변경되면 자동으로 정보 로드
     if (customRpcUrl) {
       loadContractInfo();
     }
   }, [customRpcUrl]);
 
   return (
-    <div className="bg-green-50 p-4 rounded-lg">
+    <div className="bg-white rounded-lg shadow-md p-6">
       <div className="flex items-center justify-between mb-4">
-        <h4 className="text-sm font-semibold text-green-700">
-          📋 스마트 컨트랙트 정보
-        </h4>
+        <h2 className="text-xl font-semibold text-gray-900">컨트랙트 정보</h2>
         <button
           onClick={loadContractInfo}
-          disabled={isLoading}
-          className="bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white font-bold py-1 px-3 rounded text-xs transition-colors"
+          disabled={loading}
+          className="px-3 py-1 bg-gray-500 text-white rounded text-sm font-medium hover:bg-gray-600 disabled:opacity-50"
         >
-          {isLoading ? "로딩 중..." : "새로고침"}
+          {loading ? "로딩 중..." : "새로고침"}
         </button>
       </div>
 
-      <div className="space-y-4">
-        {/* 테더 토큰 정보 */}
-        <div className="bg-white border border-green-200 rounded p-3">
-          <h5 className="text-sm font-semibold text-green-800 mb-2">
-            💰 테더 (USDT) 토큰
-          </h5>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {/* Tether 컨트랙트 정보 */}
+        <div className="p-4 bg-blue-50 rounded-lg">
+          <h3 className="font-medium text-blue-900 mb-2">Tether (USDT)</h3>
           {tetherInfo ? (
-            <div className="text-xs space-y-1">
-              <p className="text-green-700">
-                <strong>이름:</strong> {tetherInfo.name}
+            <div className="space-y-1 text-sm">
+              <p className="text-blue-700">
+                <span className="font-medium">이름:</span> {tetherInfo.name}
               </p>
-              <p className="text-green-700">
-                <strong>심볼:</strong> {tetherInfo.symbol}
+              <p className="text-blue-700">
+                <span className="font-medium">심볼:</span> {tetherInfo.symbol}
               </p>
-              <p className="text-green-700">
-                <strong>소수점:</strong> {tetherInfo.decimals}자리
-              </p>
-              <p className="text-green-700">
-                <strong>총 발행량:</strong>{" "}
+              <p className="text-blue-700">
+                <span className="font-medium">총 공급량:</span>{" "}
                 {parseFloat(tetherInfo.totalSupply).toLocaleString()} USDT
               </p>
-              <p className="text-green-700">
-                <strong>컨트랙트 주소:</strong>{" "}
-                {shortenAddress(tetherInfo.address)}
+              <p className="text-blue-700">
+                <span className="font-medium">주소:</span>{" "}
+                <span className="text-xs break-all">{tetherInfo.address}</span>
               </p>
             </div>
           ) : (
-            <p className="text-xs text-gray-500">로딩 중...</p>
+            <p className="text-blue-600 text-sm">로딩 중...</p>
           )}
         </div>
 
-        {/* RWD 토큰 정보 */}
-        <div className="bg-white border border-green-200 rounded p-3">
-          <h5 className="text-sm font-semibold text-green-800 mb-2">
-            🏆 리워드 (RWD) 토큰
-          </h5>
+        {/* RWD 컨트랙트 정보 */}
+        <div className="p-4 bg-green-50 rounded-lg">
+          <h3 className="font-medium text-green-900 mb-2">RWD</h3>
           {rwdInfo ? (
-            <div className="text-xs space-y-1">
+            <div className="space-y-1 text-sm">
               <p className="text-green-700">
-                <strong>이름:</strong> {rwdInfo.name}
+                <span className="font-medium">이름:</span> {rwdInfo.name}
               </p>
               <p className="text-green-700">
-                <strong>심볼:</strong> {rwdInfo.symbol}
+                <span className="font-medium">심볼:</span> {rwdInfo.symbol}
               </p>
               <p className="text-green-700">
-                <strong>소수점:</strong> {rwdInfo.decimals}자리
-              </p>
-              <p className="text-green-700">
-                <strong>총 발행량:</strong>{" "}
+                <span className="font-medium">총 공급량:</span>{" "}
                 {parseFloat(rwdInfo.totalSupply).toLocaleString()} RWD
               </p>
               <p className="text-green-700">
-                <strong>컨트랙트 주소:</strong>{" "}
-                {shortenAddress(rwdInfo.address)}
+                <span className="font-medium">주소:</span>{" "}
+                <span className="text-xs break-all">{rwdInfo.address}</span>
               </p>
             </div>
           ) : (
-            <p className="text-xs text-gray-500">로딩 중...</p>
+            <p className="text-green-600 text-sm">로딩 중...</p>
           )}
         </div>
 
-        {/* DecentralBank 정보 */}
-        <div className="bg-white border border-green-200 rounded p-3">
-          <h5 className="text-sm font-semibold text-green-800 mb-2">
-            🏦 Decentral Bank
-          </h5>
+        {/* DecentralBank 컨트랙트 정보 */}
+        <div className="p-4 bg-purple-50 rounded-lg">
+          <h3 className="font-medium text-purple-900 mb-2">DecentralBank</h3>
           {decentralBankInfo ? (
-            <div className="text-xs space-y-1">
-              <p className="text-green-700">
-                <strong>이름:</strong> {decentralBankInfo.name}
+            <div className="space-y-1 text-sm">
+              <p className="text-purple-700">
+                <span className="font-medium">이름:</span>{" "}
+                {decentralBankInfo.name}
               </p>
-              <p className="text-green-700">
-                <strong>컨트랙트 주소:</strong>{" "}
-                {shortenAddress(decentralBankInfo.address)}
+              <p className="text-purple-700">
+                <span className="font-medium">소유자:</span>{" "}
+                <span className="text-xs break-all">
+                  {decentralBankInfo.owner}
+                </span>
               </p>
-              <p className="text-green-700">
-                <strong>소유자:</strong>{" "}
-                {shortenAddress(decentralBankInfo.owner)}
+              <p className="text-purple-700">
+                <span className="font-medium">스테이커 수:</span>{" "}
+                {decentralBankInfo.stakersCount}명
               </p>
-              <p className="text-green-700">
-                <strong>테더 주소:</strong>{" "}
-                {shortenAddress(decentralBankInfo.tetherAddress)}
-              </p>
-              <p className="text-green-700">
-                <strong>RWD 주소:</strong>{" "}
-                {shortenAddress(decentralBankInfo.rwdAddress)}
-              </p>
-              <p className="text-green-700">
-                <strong>스테이커 수:</strong> {decentralBankInfo.stakersCount}명
-              </p>
-              <p className="text-green-700">
-                <strong>보유 테더:</strong>{" "}
+              <p className="text-purple-700">
+                <span className="font-medium">보유 USDT:</span>{" "}
                 {parseFloat(decentralBankInfo.tetherBalance).toLocaleString()}{" "}
                 USDT
               </p>
-              <p className="text-green-700">
-                <strong>보유 RWD:</strong>{" "}
+              <p className="text-purple-700">
+                <span className="font-medium">보유 RWD:</span>{" "}
                 {parseFloat(decentralBankInfo.rwdBalance).toLocaleString()} RWD
+              </p>
+              <p className="text-purple-700">
+                <span className="font-medium">주소:</span>{" "}
+                <span className="text-xs break-all">
+                  {decentralBankInfo.address}
+                </span>
               </p>
             </div>
           ) : (
-            <p className="text-xs text-gray-500">로딩 중...</p>
+            <p className="text-purple-600 text-sm">로딩 중...</p>
           )}
         </div>
       </div>
-
-      <p className="text-xs text-green-600 mt-3">
-        💡 이 정보들은 공개 정보로, 비밀키 없이도 조회 가능합니다
-      </p>
     </div>
   );
 }

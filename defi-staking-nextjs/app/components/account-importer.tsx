@@ -1,5 +1,7 @@
+"use client";
+
 import { useState } from "react";
-import { IImportedAccount, getAccountFromPrivateKey } from "./web3-utils";
+import { getAccountFromPrivateKey } from "../web3";
 
 interface AccountImporterProps {
   customRpcUrl: string;
@@ -10,103 +12,81 @@ export default function AccountImporter({
   customRpcUrl,
   onError,
 }: AccountImporterProps) {
-  const [privateKey, setPrivateKey] = useState<string>("");
-  const [importedAccount, setImportedAccount] =
-    useState<IImportedAccount | null>(null);
+  const [privateKey, setPrivateKey] = useState("");
+  const [accountInfo, setAccountInfo] = useState<any>(null);
+  const [loading, setLoading] = useState(false);
 
-  const importAccountFromPrivateKey = async () => {
+  const handleImport = async () => {
+    if (!privateKey.trim()) {
+      onError("비밀키를 입력해주세요.");
+      return;
+    }
+
     try {
-      if (!privateKey) {
-        onError("비밀키를 입력해주세요.");
-        return;
-      }
+      setLoading(true);
+      onError("");
 
       const account = await getAccountFromPrivateKey(privateKey, customRpcUrl);
-      setImportedAccount(account);
-      onError(""); // 에러 클리어
-      console.log("✅ 계정 정보 확인 완료!");
-      console.log("MetaMask로 계정을 가져오려면:");
-      console.log("1. MetaMask > 계정 메뉴 > 계정 가져오기");
-      console.log("2. 비밀키 입력:", "0x" + privateKey.replace("0x", ""));
-    } catch (err: any) {
-      console.error("계정 가져오기 오류:", err);
-      onError(`계정 가져오기에 실패했습니다: ${err.message}`);
+      setAccountInfo(account);
+    } catch (error: any) {
+      onError(`계정 가져오기 실패: ${error.message}`);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const clearImportedAccount = () => {
-    setPrivateKey("");
-    setImportedAccount(null);
-    onError("");
-  };
-
   return (
-    <div className="bg-blue-50 p-4 rounded-lg">
-      <h4 className="text-sm font-semibold text-blue-700 mb-2">
-        🔑 Ganache 테스트 계정 가져오기
-      </h4>
-      <div className="space-y-3">
-        <div className="flex space-x-2">
-          <input
-            type="password"
-            value={privateKey}
-            onChange={(e) => setPrivateKey(e.target.value)}
-            placeholder="Ganache 계정의 비밀키를 입력하세요"
-            className="flex-1 px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          <button
-            onClick={importAccountFromPrivateKey}
-            className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded text-sm transition-colors"
-          >
-            확인
-          </button>
-          {importedAccount && (
-            <button
-              onClick={clearImportedAccount}
-              className="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded text-sm transition-colors"
-            >
-              초기화
-            </button>
-          )}
-        </div>
+    <div className="bg-white rounded-lg shadow-md p-6">
+      <h2 className="text-xl font-semibold text-gray-900 mb-4">
+        Ganache 테스트 계정 가져오기
+      </h2>
 
-        {importedAccount && (
-          <div className="bg-green-50 border border-green-200 rounded p-3">
-            <h5 className="text-sm font-semibold text-green-800 mb-2">
-              ✅ 계정 정보 확인 완료
-            </h5>
-            <div className="text-xs space-y-1">
-              <p className="text-green-700">
-                <strong>주소:</strong> {importedAccount.address}
-              </p>
-              <p className="text-green-700">
-                <strong>ETH 잔액:</strong> {importedAccount.ethBalance} ETH
-              </p>
-              <p className="text-green-700">
-                <strong>테더 잔액:</strong> {importedAccount.tetherBalance} USDT
-              </p>
-              <p className="text-green-700">
-                <strong>리워드 잔액:</strong> {importedAccount.rwdBalance} RWD
-              </p>
-            </div>
-            <div className="mt-2 p-2 bg-yellow-100 border border-yellow-300 rounded text-xs">
-              <p className="text-yellow-800">
-                💡 <strong>MetaMask로 계정 가져오기:</strong>
-              </p>
-              <ol className="text-yellow-700 mt-1 list-decimal list-inside">
-                <li>MetaMask &gt; 계정 메뉴 &gt; "계정 가져오기" 클릭</li>
-                <li>위에 입력한 비밀키 붙여넣기</li>
-                <li>"가져오기" 클릭</li>
-              </ol>
-            </div>
-          </div>
-        )}
-
-        <p className="text-xs text-blue-600">
-          Ganache 계정의 비밀키를 입력하면 해당 계정의 ETH 잔액, 테더(USDT)
-          잔액, 리워드(RWD) 잔액을 확인할 수 있습니다
+      <div className="mb-4">
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          계정 비밀키
+        </label>
+        <input
+          type="password"
+          value={privateKey}
+          onChange={(e) => setPrivateKey(e.target.value)}
+          placeholder="0x로 시작하는 64자리 비밀키"
+          className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+        <p className="text-xs text-gray-500 mt-1">
+          Ganache 계정의 비밀키를 입력하세요
         </p>
       </div>
+
+      <button
+        onClick={handleImport}
+        disabled={loading || !privateKey.trim()}
+        className="w-full px-4 py-2 bg-blue-500 text-white rounded text-sm font-medium hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        {loading ? "가져오는 중..." : "계정 가져오기"}
+      </button>
+
+      {accountInfo && (
+        <div className="mt-4 p-4 bg-gray-50 rounded-lg">
+          <h3 className="font-medium text-gray-900 mb-2">계정 정보</h3>
+          <div className="space-y-1 text-sm">
+            <p className="text-gray-700">
+              <span className="font-medium">주소:</span> {accountInfo.address}
+            </p>
+            <p className="text-gray-700">
+              <span className="font-medium">ETH 잔액:</span>{" "}
+              {accountInfo.ethBalance} ETH
+            </p>
+            <p className="text-gray-700">
+              <span className="font-medium">Tether 잔액:</span>{" "}
+              {accountInfo.tetherBalance} USDT
+            </p>
+            <p className="text-gray-700">
+              <span className="font-medium">RWD 잔액:</span>{" "}
+              {accountInfo.rwdBalance} RWD
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
