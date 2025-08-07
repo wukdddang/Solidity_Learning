@@ -13,6 +13,8 @@ import ReactFlow, {
   ReactFlowProvider,
   NodeDragHandler,
   useReactFlow,
+  NodeChange,
+  EdgeChange,
 } from "reactflow";
 import "reactflow/dist/style.css";
 
@@ -27,14 +29,64 @@ function EditorCanvasInner() {
   const { nodes, edges, setNodes, setEdges, 블록을_추가_한다 } = useEditor();
   const reactFlowInstance = useReactFlow();
 
-  const [reactFlowNodes, setReactFlowNodes, onNodesChange] = useNodesState([]);
-  const [reactFlowEdges, setReactFlowEdges, onEdgesChange] = useEdgesState([]);
+  const [reactFlowNodes, setReactFlowNodes, onNodesChangeInternal] =
+    useNodesState([]);
+  const [reactFlowEdges, setReactFlowEdges, onEdgesChangeInternal] =
+    useEdgesState([]);
 
   // 패닝 관련 상태 (기본적으로 패닝 활성화)
   const [showPanHint, setShowPanHint] = useState(false);
 
   // 컨테이너 참조
   const canvasRef = useRef<HTMLDivElement>(null);
+
+  // ReactFlow 상태 변경을 컨텍스트에 동기화하는 커스텀 핸들러
+  const onNodesChange = useCallback(
+    (changes: NodeChange[]) => {
+      onNodesChangeInternal(changes);
+
+      // 노드 삭제가 포함된 경우 컨텍스트 상태도 업데이트
+      const removeChanges = changes.filter(
+        (change): change is NodeChange & { type: "remove"; id: string } =>
+          change.type === "remove"
+      );
+
+      if (removeChanges.length > 0) {
+        const removedNodeIds = removeChanges.map((change) => change.id);
+        setNodes((prevNodes) =>
+          prevNodes.filter((node) => !removedNodeIds.includes(node.id))
+        );
+        setEdges((prevEdges) =>
+          prevEdges.filter(
+            (edge) =>
+              !removedNodeIds.includes(edge.source) &&
+              !removedNodeIds.includes(edge.target)
+          )
+        );
+      }
+    },
+    [onNodesChangeInternal, setNodes, setEdges]
+  );
+
+  const onEdgesChange = useCallback(
+    (changes: EdgeChange[]) => {
+      onEdgesChangeInternal(changes);
+
+      // 엣지 삭제가 포함된 경우 컨텍스트 상태도 업데이트
+      const removeChanges = changes.filter(
+        (change): change is EdgeChange & { type: "remove"; id: string } =>
+          change.type === "remove"
+      );
+
+      if (removeChanges.length > 0) {
+        const removedEdgeIds = removeChanges.map((change) => change.id);
+        setEdges((prevEdges) =>
+          prevEdges.filter((edge) => !removedEdgeIds.includes(edge.id))
+        );
+      }
+    },
+    [onEdgesChangeInternal, setEdges]
+  );
 
   // 컨텍스트 상태와 ReactFlow 상태 동기화
   useEffect(() => {

@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { useState } from "react";
 import {
   Blocks,
   Shield,
@@ -7,9 +10,26 @@ import {
   ArrowRight,
   Palette,
   CheckCircle,
+  X,
+  Mail,
+  Phone,
+  MapPin,
+  Building,
+  Calendar,
+  FileText,
+  Users,
 } from "lucide-react";
 
 export default function Home() {
+  const [showModal, setShowModal] = useState<string | null>(null);
+
+  const openModal = (type: string) => {
+    setShowModal(type);
+  };
+
+  const closeModal = () => {
+    setShowModal(null);
+  };
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       {/* Header */}
@@ -308,19 +328,28 @@ export default function Home() {
               <h3 className="font-semibold mb-4">회사</h3>
               <ul className="space-y-2 text-gray-400">
                 <li>
-                  <Link href="/about" className="hover:text-white">
+                  <button
+                    onClick={() => openModal("about")}
+                    className="hover:text-white"
+                  >
                     소개
-                  </Link>
+                  </button>
                 </li>
                 <li>
-                  <Link href="/contact" className="hover:text-white">
+                  <button
+                    onClick={() => openModal("contact")}
+                    className="hover:text-white"
+                  >
                     연락처
-                  </Link>
+                  </button>
                 </li>
                 <li>
-                  <Link href="/privacy" className="hover:text-white">
+                  <button
+                    onClick={() => openModal("privacy")}
+                    className="hover:text-white"
+                  >
                     개인정보처리방침
-                  </Link>
+                  </button>
                 </li>
               </ul>
             </div>
@@ -330,6 +359,398 @@ export default function Home() {
           </div>
         </div>
       </footer>
+
+      {/* 모달들 */}
+      {showModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            {/* 회사 소개 모달 */}
+            {showModal === "about" && (
+              <>
+                <div className="flex items-center justify-between p-6 border-b">
+                  <div className="flex items-center gap-3">
+                    <Building className="h-6 w-6 text-blue-600" />
+                    <h2 className="text-xl font-semibold text-gray-900">
+                      회사 소개
+                    </h2>
+                  </div>
+                  <button
+                    onClick={closeModal}
+                    className="text-gray-400 hover:text-gray-600"
+                  >
+                    <X className="h-6 w-6" />
+                  </button>
+                </div>
+                <div className="p-6">
+                  <div className="space-y-6">
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-900 mb-3">
+                        스마트 컨트랙트 빌더
+                      </h3>
+                      <p className="text-gray-600 leading-relaxed mb-4">
+                        저희는 블록체인 기술의 진입장벽을 낮추고, 누구나 쉽게
+                        스마트 컨트랙트를 만들 수 있는 혁신적인 플랫폼을
+                        제공합니다. 복잡한 코딩 없이도 드래그 앤 드롭만으로
+                        안전하고 검증된 스마트 컨트랙트를 생성할 수 있습니다.
+                      </p>
+                    </div>
+
+                    <div>
+                      <h4 className="font-semibold text-gray-900 mb-2">미션</h4>
+                      <p className="text-gray-600 mb-4">
+                        Web3 세상의 진입장벽을 낮춰 더 많은 사람들이 블록체인
+                        기술의 혜택을 누릴 수 있도록 돕습니다.
+                      </p>
+                    </div>
+
+                    <div>
+                      <h4 className="font-semibold text-gray-900 mb-2">비전</h4>
+                      <p className="text-gray-600 mb-4">
+                        누구나 5분 만에 자신만의 스마트 컨트랙트를 만들 수 있는
+                        세상을 만들고자 합니다.
+                      </p>
+                    </div>
+
+                    <div>
+                      <h4 className="font-semibold text-gray-900 mb-3">
+                        핵심 가치
+                      </h4>
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-2">
+                          <CheckCircle className="h-4 w-4 text-green-500" />
+                          <span className="text-gray-600">
+                            접근성: 코딩 지식 없이도 사용 가능
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <CheckCircle className="h-4 w-4 text-green-500" />
+                          <span className="text-gray-600">
+                            안전성: OpenZeppelin 표준 기반
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <CheckCircle className="h-4 w-4 text-green-500" />
+                          <span className="text-gray-600">
+                            투명성: 모든 과정이 공개되고 검증됨
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <CheckCircle className="h-4 w-4 text-green-500" />
+                          <span className="text-gray-600">
+                            혁신성: 지속적인 기술 발전과 개선
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="bg-blue-50 rounded-lg p-4">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Calendar className="h-4 w-4 text-blue-600" />
+                        <h4 className="font-semibold text-blue-900">
+                          설립 정보
+                        </h4>
+                      </div>
+                      <div className="text-sm text-blue-800 space-y-1">
+                        <p>설립년도: 2024년</p>
+                        <p>위치: 서울, 대한민국</p>
+                        <p>팀 규모: 15명 (개발자, 디자이너, 블록체인 전문가)</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </>
+            )}
+
+            {/* 연락처 모달 */}
+            {showModal === "contact" && (
+              <>
+                <div className="flex items-center justify-between p-6 border-b">
+                  <div className="flex items-center gap-3">
+                    <Mail className="h-6 w-6 text-green-600" />
+                    <h2 className="text-xl font-semibold text-gray-900">
+                      연락처
+                    </h2>
+                  </div>
+                  <button
+                    onClick={closeModal}
+                    className="text-gray-400 hover:text-gray-600"
+                  >
+                    <X className="h-6 w-6" />
+                  </button>
+                </div>
+                <div className="p-6">
+                  <div className="space-y-6">
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                        문의하기
+                      </h3>
+                      <p className="text-gray-600 mb-6">
+                        궁금한 점이나 지원이 필요하시면 언제든 연락주세요.
+                        최대한 빠른 시간 내에 답변드리겠습니다.
+                      </p>
+                    </div>
+
+                    <div className="grid md:grid-cols-2 gap-6">
+                      <div className="space-y-4">
+                        <div className="flex items-start gap-3">
+                          <Mail className="h-5 w-5 text-blue-600 mt-0.5" />
+                          <div>
+                            <h4 className="font-semibold text-gray-900">
+                              이메일
+                            </h4>
+                            <p className="text-gray-600">
+                              support@smartcontract-builder.com
+                            </p>
+                            <p className="text-sm text-gray-500 mt-1">
+                              일반 문의 및 지원
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="flex items-start gap-3">
+                          <Phone className="h-5 w-5 text-green-600 mt-0.5" />
+                          <div>
+                            <h4 className="font-semibold text-gray-900">
+                              전화
+                            </h4>
+                            <p className="text-gray-600">02-1234-5678</p>
+                            <p className="text-sm text-gray-500 mt-1">
+                              평일 9:00 - 18:00
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="flex items-start gap-3">
+                          <MapPin className="h-5 w-5 text-red-600 mt-0.5" />
+                          <div>
+                            <h4 className="font-semibold text-gray-900">
+                              주소
+                            </h4>
+                            <p className="text-gray-600">
+                              서울특별시 강남구 테헤란로 123
+                              <br />
+                              스마트빌딩 10층
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="bg-gray-50 rounded-lg p-4">
+                        <h4 className="font-semibold text-gray-900 mb-3">
+                          부서별 연락처
+                        </h4>
+                        <div className="space-y-3 text-sm">
+                          <div>
+                            <p className="font-medium text-gray-900">
+                              기술 지원
+                            </p>
+                            <p className="text-gray-600">
+                              tech@smartcontract-builder.com
+                            </p>
+                          </div>
+                          <div>
+                            <p className="font-medium text-gray-900">
+                              사업 제휴
+                            </p>
+                            <p className="text-gray-600">
+                              business@smartcontract-builder.com
+                            </p>
+                          </div>
+                          <div>
+                            <p className="font-medium text-gray-900">
+                              미디어 문의
+                            </p>
+                            <p className="text-gray-600">
+                              press@smartcontract-builder.com
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="bg-blue-50 rounded-lg p-4">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Users className="h-4 w-4 text-blue-600" />
+                        <h4 className="font-semibold text-blue-900">
+                          커뮤니티
+                        </h4>
+                      </div>
+                      <p className="text-sm text-blue-800 mb-3">
+                        개발자 커뮤니티에 참여하여 다른 사용자들과 소통하세요.
+                      </p>
+                      <div className="flex gap-3 text-sm">
+                        <button className="text-blue-600 hover:text-blue-700 font-medium">
+                          Discord
+                        </button>
+                        <button className="text-blue-600 hover:text-blue-700 font-medium">
+                          Telegram
+                        </button>
+                        <button className="text-blue-600 hover:text-blue-700 font-medium">
+                          GitHub
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </>
+            )}
+
+            {/* 개인정보처리방침 모달 */}
+            {showModal === "privacy" && (
+              <>
+                <div className="flex items-center justify-between p-6 border-b">
+                  <div className="flex items-center gap-3">
+                    <FileText className="h-6 w-6 text-purple-600" />
+                    <h2 className="text-xl font-semibold text-gray-900">
+                      개인정보처리방침
+                    </h2>
+                  </div>
+                  <button
+                    onClick={closeModal}
+                    className="text-gray-400 hover:text-gray-600"
+                  >
+                    <X className="h-6 w-6" />
+                  </button>
+                </div>
+                <div className="p-6">
+                  <div className="space-y-6 text-sm">
+                    <div>
+                      <p className="text-gray-600 mb-4">
+                        <strong>시행일자:</strong> 2024년 1월 1일
+                        <br />
+                        <strong>최종 업데이트:</strong> 2024년 12월 15일
+                      </p>
+                    </div>
+
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-900 mb-3">
+                        1. 개인정보 수집 및 이용 목적
+                      </h3>
+                      <p className="text-gray-600 mb-2">
+                        저희는 다음 목적을 위해 개인정보를 수집합니다:
+                      </p>
+                      <ul className="list-disc pl-6 text-gray-600 space-y-1">
+                        <li>서비스 제공 및 계정 관리</li>
+                        <li>프로젝트 저장 및 관리</li>
+                        <li>고객 지원 및 문의 응답</li>
+                        <li>서비스 개선 및 개발</li>
+                      </ul>
+                    </div>
+
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-900 mb-3">
+                        2. 수집하는 개인정보 항목
+                      </h3>
+                      <div className="space-y-2">
+                        <div>
+                          <p className="font-medium text-gray-700">
+                            필수 정보:
+                          </p>
+                          <p className="text-gray-600">이메일 주소, 사용자명</p>
+                        </div>
+                        <div>
+                          <p className="font-medium text-gray-700">
+                            선택 정보:
+                          </p>
+                          <p className="text-gray-600">
+                            프로필 이미지, 지갑 주소
+                          </p>
+                        </div>
+                        <div>
+                          <p className="font-medium text-gray-700">
+                            자동 수집 정보:
+                          </p>
+                          <p className="text-gray-600">
+                            IP 주소, 접속 로그, 쿠키
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-900 mb-3">
+                        3. 개인정보 보관 및 이용 기간
+                      </h3>
+                      <p className="text-gray-600 mb-2">
+                        수집된 개인정보는 목적 달성 시까지 보관하며, 계정 삭제
+                        요청 시 즉시 삭제됩니다.
+                      </p>
+                      <ul className="list-disc pl-6 text-gray-600 space-y-1">
+                        <li>계정 정보: 계정 삭제 시까지</li>
+                        <li>프로젝트 데이터: 사용자 요청 시 삭제</li>
+                        <li>접속 로그: 3개월</li>
+                      </ul>
+                    </div>
+
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-900 mb-3">
+                        4. 개인정보 제3자 제공
+                      </h3>
+                      <p className="text-gray-600">
+                        저희는 사용자의 동의 없이 개인정보를 제3자에게 제공하지
+                        않습니다. 단, 법적 요구가 있을 경우 예외로 합니다.
+                      </p>
+                    </div>
+
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-900 mb-3">
+                        5. 개인정보 보호 조치
+                      </h3>
+                      <ul className="list-disc pl-6 text-gray-600 space-y-1">
+                        <li>암호화를 통한 안전한 데이터 저장</li>
+                        <li>접근 권한 관리 및 모니터링</li>
+                        <li>정기적인 보안 점검</li>
+                        <li>직원 보안 교육</li>
+                      </ul>
+                    </div>
+
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-900 mb-3">
+                        6. 쿠키 사용
+                      </h3>
+                      <p className="text-gray-600">
+                        저희는 서비스 개선을 위해 쿠키를 사용합니다. 브라우저
+                        설정을 통해 쿠키 사용을 거부할 수 있습니다.
+                      </p>
+                    </div>
+
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-900 mb-3">
+                        7. 이용자 권리
+                      </h3>
+                      <p className="text-gray-600 mb-2">
+                        사용자는 다음 권리를 가집니다:
+                      </p>
+                      <ul className="list-disc pl-6 text-gray-600 space-y-1">
+                        <li>개인정보 열람 요구</li>
+                        <li>개인정보 정정·삭제 요구</li>
+                        <li>개인정보 처리 정지 요구</li>
+                        <li>손해배상 청구</li>
+                      </ul>
+                    </div>
+
+                    <div className="bg-gray-50 rounded-lg p-4">
+                      <h4 className="font-semibold text-gray-900 mb-2">
+                        문의처
+                      </h4>
+                      <p className="text-gray-600">
+                        개인정보 관련 문의사항이 있으시면 아래 연락처로
+                        문의해주세요.
+                      </p>
+                      <p className="text-gray-600 mt-2">
+                        <strong>개인정보보호 담당자:</strong>{" "}
+                        privacy@smartcontract-builder.com
+                        <br />
+                        <strong>전화:</strong> 02-1234-5678
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
