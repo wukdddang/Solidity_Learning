@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect, useMemo } from "react";
 import {
   Blocks,
   Shield,
@@ -22,6 +22,20 @@ import {
 
 export default function Home() {
   const [showModal, setShowModal] = useState<string | null>(null);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  // Unsplash 이미지 컬렉션 (blockchain, technology, digital 관련)
+  const heroImages = useMemo(
+    () => [
+      "https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=1920&h=1080&fit=crop&crop=center", // blockchain
+      "https://images.unsplash.com/photo-1518186285589-2f7649de83e0?w=1920&h=1080&fit=crop&crop=center", // circuit board
+      "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1920&h=1080&fit=crop&crop=center", // data visualization
+      "https://images.unsplash.com/photo-1563770660941-20978e870e26?w=1920&h=1080&fit=crop&crop=center", // digital network
+      "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1920&h=1080&fit=crop&crop=center", // space tech
+      "https://images.unsplash.com/photo-1526628953301-3e589a6a8b74?w=1920&h=1080&fit=crop&crop=center", // robot hand
+    ],
+    []
+  );
 
   const openModal = (type: string) => {
     setShowModal(type);
@@ -30,39 +44,61 @@ export default function Home() {
   const closeModal = () => {
     setShowModal(null);
   };
+
+  // 이미지 변경 효과
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentImageIndex((prev) =>
+        prev === heroImages.length - 1 ? 0 : prev + 1
+      );
+    }, 5000); // 5초마다 이미지 변경
+
+    return () => clearInterval(interval);
+  }, [heroImages.length]);
+
+  // 이미지 프리로딩
+  useEffect(() => {
+    heroImages.forEach((src) => {
+      const img = new Image();
+      img.src = src;
+    });
+  }, [heroImages]);
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       {/* Header */}
-      <header className="border-b bg-white/50 backdrop-blur-sm">
+      <header className="absolute top-0 left-0 right-0 z-20 border-b border-white/20 bg-black/20 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center gap-2">
-              <Blocks className="h-8 w-8 text-blue-600" />
-              <span className="text-xl font-bold text-gray-900">
+              <Blocks className="h-8 w-8 text-blue-400" />
+              <span className="text-xl font-bold text-white">
                 스마트 컨트랙트 빌더
               </span>
             </div>
             <nav className="hidden md:flex space-x-8">
               <Link
                 href="/templates"
-                className="text-gray-600 hover:text-gray-900"
+                className="text-gray-200 hover:text-white transition-colors"
               >
                 템플릿
               </Link>
               <Link
                 href="/dashboard"
-                className="text-gray-600 hover:text-gray-900"
+                className="text-gray-200 hover:text-white transition-colors"
               >
                 내 프로젝트
               </Link>
-              <Link href="/docs" className="text-gray-600 hover:text-gray-900">
+              <Link
+                href="/docs"
+                className="text-gray-200 hover:text-white transition-colors"
+              >
                 가이드
               </Link>
             </nav>
             <div className="flex items-center gap-4">
               <Link
                 href="/dashboard"
-                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                className="bg-blue-600/90 backdrop-blur-sm text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-all duration-300 border border-blue-500/50"
               >
                 시작하기
               </Link>
@@ -72,15 +108,41 @@ export default function Home() {
       </header>
 
       {/* Hero Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto text-center">
-          <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
+      <section className="relative py-20 px-4 sm:px-6 lg:px-8 min-h-screen flex items-center overflow-hidden">
+        {/* 동적 배경 이미지 */}
+        <div className="absolute inset-0 z-0">
+          {/* 모든 배경 이미지들 */}
+          {heroImages.map((image, index) => (
+            <div
+              key={index}
+              className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-opacity duration-1000 ease-in-out"
+              style={{
+                backgroundImage: `url(${image})`,
+                opacity: index === currentImageIndex ? 1 : 0,
+              }}
+            />
+          ))}
+          {/* 어두운 오버레이 */}
+          <div className="absolute inset-0 bg-black/60" />
+          {/* 그라디언트 오버레이 */}
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-900/30 via-transparent to-purple-900/30" />
+          {/* 애니메이션 파티클 효과 */}
+          <div className="absolute inset-0 opacity-20">
+            <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-white rounded-full animate-pulse"></div>
+            <div className="absolute top-1/3 right-1/3 w-1 h-1 bg-blue-400 rounded-full animate-bounce delay-300"></div>
+            <div className="absolute bottom-1/4 left-1/3 w-1.5 h-1.5 bg-white rounded-full animate-pulse delay-700"></div>
+            <div className="absolute top-2/3 right-1/4 w-1 h-1 bg-blue-300 rounded-full animate-bounce delay-1000"></div>
+          </div>
+        </div>
+
+        <div className="relative z-10 max-w-7xl mx-auto text-center">
+          <h1 className="text-5xl md:text-6xl font-bold text-white mb-6 drop-shadow-lg">
             코딩 없이 드래그 앤 드롭으로,
             <br />
-            <span className="text-blue-600">나만의 스마트 컨트랙트</span>를
+            <span className="text-blue-400">나만의 스마트 컨트랙트</span>를
             만드세요
           </h1>
-          <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
+          <p className="text-xl text-gray-200 mb-8 max-w-3xl mx-auto drop-shadow-md">
             복잡한 솔리디티 코드는 잊으세요. 검증된 블록들을 조립하여 5분 만에
             안전한 스마트 컨트랙트를 배포할 수 있습니다.
           </p>
@@ -88,14 +150,14 @@ export default function Home() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
             <Link
               href="/templates"
-              className="bg-blue-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-blue-700 transition-colors flex items-center gap-2"
+              className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-lg text-lg font-semibold transition-all duration-300 flex items-center gap-2 transform hover:scale-105 shadow-lg hover:shadow-xl"
             >
               <Play className="h-5 w-5" />
               지금 바로 시작하기
             </Link>
             <Link
               href="/templates"
-              className="border-2 border-gray-300 text-gray-700 px-8 py-4 rounded-lg text-lg font-semibold hover:border-gray-400 transition-colors flex items-center gap-2"
+              className="border-2 border-white/50 bg-white/10 backdrop-blur-sm text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-white/20 transition-all duration-300 flex items-center gap-2 transform hover:scale-105"
             >
               <Palette className="h-5 w-5" />
               템플릿 둘러보기
@@ -103,14 +165,41 @@ export default function Home() {
           </div>
 
           {/* Demo Video Placeholder */}
-          <div className="bg-gray-100 rounded-xl p-8 max-w-4xl mx-auto">
-            <div className="aspect-video bg-gray-200 rounded-lg flex items-center justify-center">
+          <div className="bg-white/10 backdrop-blur-sm rounded-xl p-8 max-w-4xl mx-auto border border-white/20">
+            <div className="aspect-video bg-black/30 rounded-lg flex items-center justify-center backdrop-blur-sm">
               <div className="text-center">
-                <Play className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-                <p className="text-gray-600">실제 에디터 화면 데모 영상</p>
-                <p className="text-sm text-gray-500 mt-2">(곧 추가 예정)</p>
+                <Play className="h-16 w-16 text-white/80 mx-auto mb-4" />
+                <p className="text-white/90 font-medium">
+                  실제 에디터 화면 데모 영상
+                </p>
+                <p className="text-sm text-white/70 mt-2">(곧 추가 예정)</p>
               </div>
             </div>
+          </div>
+        </div>
+
+        {/* 이미지 인디케이터 */}
+        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-10">
+          <div className="flex space-x-3">
+            {heroImages.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => {
+                  if (index !== currentImageIndex) {
+                    setCurrentImageIndex(index);
+                  }
+                }}
+                className={`relative w-3 h-3 rounded-full transition-all duration-300 transform ${
+                  index === currentImageIndex
+                    ? "bg-white scale-125 shadow-lg"
+                    : "bg-white/50 hover:bg-white/75 hover:scale-110"
+                }`}
+              >
+                {index === currentImageIndex && (
+                  <div className="absolute inset-0 rounded-full bg-white animate-ping opacity-50"></div>
+                )}
+              </button>
+            ))}
           </div>
         </div>
       </section>
