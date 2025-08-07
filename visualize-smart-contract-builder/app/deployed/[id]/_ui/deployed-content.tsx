@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useDeployed } from "../_context/deployed.context";
-import { formatAddress } from "@/lib/utils";
+import { formatAddress } from "@/src/lib/utils";
 import {
   ArrowLeft,
   ExternalLink,

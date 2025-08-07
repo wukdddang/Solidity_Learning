@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { ContractProject } from "@/types/contract";
-import { formatDate } from "@/lib/utils";
+import { formatDate } from "@/src/lib/utils";
 import {
   Calendar,
   Settings,
