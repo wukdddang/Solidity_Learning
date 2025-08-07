@@ -403,3 +403,239 @@ export const getTetherContractInfo = async (
     throw new Error(`테더 토큰 정보 조회에 실패했습니다: ${error.message}`);
   }
 };
+
+// 스테이킹 관련 인터페이스
+export interface IStakingInfo {
+  stakingBalance: string;
+  hasStaked: boolean;
+  isStaking: boolean;
+  rwdBalance: string;
+}
+
+// 계정의 스테이킹 정보 조회
+export const getStakingInfo = async (
+  address: string,
+  rpcUrl: string
+): Promise<IStakingInfo> => {
+  try {
+    const web3 = new Web3(rpcUrl);
+    const networkId = await web3.eth.net.getId();
+
+    // DecentralBank 컨트랙트 주소 가져오기
+    const decentralBankAddress = (DecentralBank.networks as any)[
+      networkId.toString()
+    ]?.address;
+    if (!decentralBankAddress) {
+      throw new Error(
+        `네트워크 ID ${networkId}에 DecentralBank 컨트랙트가 배포되지 않았습니다.`
+      );
+    }
+
+    // DecentralBank 컨트랙트 인스턴스 생성
+    const decentralBankContract = new web3.eth.Contract(
+      DecentralBank.abi as any,
+      decentralBankAddress
+    );
+
+    // 스테이킹 정보 조회
+    const [stakingBalance, hasStaked, isStaking] = await Promise.all([
+      decentralBankContract.methods
+        .stakingBalance(address)
+        .call({ gas: 100000 }),
+      decentralBankContract.methods.hasStaked(address).call({ gas: 100000 }),
+      decentralBankContract.methods.isStaking(address).call({ gas: 100000 }),
+    ]);
+
+    // RWD 잔액 조회
+    const rwdBalance = await getRWDBalance(address, rpcUrl);
+
+    // stakingBalance를 읽기 쉬운 형태로 변환
+    const stakingBalanceInTokens = web3.utils.fromWei(stakingBalance, "ether");
+
+    return {
+      stakingBalance: stakingBalanceInTokens,
+      hasStaked,
+      isStaking,
+      rwdBalance,
+    };
+  } catch (error: any) {
+    console.error("스테이킹 정보 조회 실패:", error);
+    throw new Error(`스테이킹 정보 조회에 실패했습니다: ${error.message}`);
+  }
+};
+
+// Tether 토큰 승인 (스테이킹 전 필요)
+export const approveTether = async (
+  privateKey: string,
+  amount: string,
+  rpcUrl: string
+): Promise<string> => {
+  try {
+    const web3 = new Web3(rpcUrl);
+    const networkId = await web3.eth.net.getId();
+
+    // 계정 설정
+    let cleanPrivateKey = privateKey.trim();
+    if (cleanPrivateKey.startsWith("0x")) {
+      cleanPrivateKey = cleanPrivateKey.substring(2);
+    }
+    const account = web3.eth.accounts.privateKeyToAccount(
+      "0x" + cleanPrivateKey
+    );
+    web3.eth.accounts.wallet.add(account);
+
+    // Tether 컨트랙트 주소 가져오기
+    const tetherAddress = (Tether.networks as any)[networkId.toString()]
+      ?.address;
+    if (!tetherAddress) {
+      throw new Error(
+        `네트워크 ID ${networkId}에 Tether 컨트랙트가 배포되지 않았습니다.`
+      );
+    }
+
+    // DecentralBank 컨트랙트 주소 가져오기
+    const decentralBankAddress = (DecentralBank.networks as any)[
+      networkId.toString()
+    ]?.address;
+    if (!decentralBankAddress) {
+      throw new Error(
+        `네트워크 ID ${networkId}에 DecentralBank 컨트랙트가 배포되지 않았습니다.`
+      );
+    }
+
+    // Tether 컨트랙트 인스턴스 생성
+    const tetherContract = new web3.eth.Contract(
+      Tether.abi as any,
+      tetherAddress
+    );
+
+    // amount를 Wei로 변환
+    const amountInWei = web3.utils.toWei(amount, "ether");
+
+    // approve 트랜잭션 실행
+    const approveTx = tetherContract.methods.approve(
+      decentralBankAddress,
+      amountInWei
+    );
+    const gasEstimate = await approveTx.estimateGas({ from: account.address });
+
+    const result = await approveTx.send({
+      from: account.address,
+      gas: Math.floor(gasEstimate * 1.2), // 20% 버퍼
+    });
+
+    console.log("Tether 승인 완료:", result.transactionHash);
+    return result.transactionHash;
+  } catch (error: any) {
+    console.error("Tether 승인 실패:", error);
+    throw new Error(`Tether 승인에 실패했습니다: ${error.message}`);
+  }
+};
+
+// 토큰 스테이킹
+export const stakeTokens = async (
+  privateKey: string,
+  amount: string,
+  rpcUrl: string
+): Promise<string> => {
+  try {
+    const web3 = new Web3(rpcUrl);
+    const networkId = await web3.eth.net.getId();
+
+    // 계정 설정
+    let cleanPrivateKey = privateKey.trim();
+    if (cleanPrivateKey.startsWith("0x")) {
+      cleanPrivateKey = cleanPrivateKey.substring(2);
+    }
+    const account = web3.eth.accounts.privateKeyToAccount(
+      "0x" + cleanPrivateKey
+    );
+    web3.eth.accounts.wallet.add(account);
+
+    // DecentralBank 컨트랙트 주소 가져오기
+    const decentralBankAddress = (DecentralBank.networks as any)[
+      networkId.toString()
+    ]?.address;
+    if (!decentralBankAddress) {
+      throw new Error(
+        `네트워크 ID ${networkId}에 DecentralBank 컨트랙트가 배포되지 않았습니다.`
+      );
+    }
+
+    // DecentralBank 컨트랙트 인스턴스 생성
+    const decentralBankContract = new web3.eth.Contract(
+      DecentralBank.abi as any,
+      decentralBankAddress
+    );
+
+    // amount를 Wei로 변환
+    const amountInWei = web3.utils.toWei(amount, "ether");
+
+    // depositTokens 트랜잭션 실행
+    const stakeTx = decentralBankContract.methods.depositTokens(amountInWei);
+    const gasEstimate = await stakeTx.estimateGas({ from: account.address });
+
+    const result = await stakeTx.send({
+      from: account.address,
+      gas: Math.floor(gasEstimate * 1.2), // 20% 버퍼
+    });
+
+    console.log("토큰 스테이킹 완료:", result.transactionHash);
+    return result.transactionHash;
+  } catch (error: any) {
+    console.error("토큰 스테이킹 실패:", error);
+    throw new Error(`토큰 스테이킹에 실패했습니다: ${error.message}`);
+  }
+};
+
+// 토큰 언스테이킹
+export const unstakeTokens = async (
+  privateKey: string,
+  rpcUrl: string
+): Promise<string> => {
+  try {
+    const web3 = new Web3(rpcUrl);
+    const networkId = await web3.eth.net.getId();
+
+    // 계정 설정
+    let cleanPrivateKey = privateKey.trim();
+    if (cleanPrivateKey.startsWith("0x")) {
+      cleanPrivateKey = cleanPrivateKey.substring(2);
+    }
+    const account = web3.eth.accounts.privateKeyToAccount(
+      "0x" + cleanPrivateKey
+    );
+    web3.eth.accounts.wallet.add(account);
+
+    // DecentralBank 컨트랙트 주소 가져오기
+    const decentralBankAddress = (DecentralBank.networks as any)[
+      networkId.toString()
+    ]?.address;
+    if (!decentralBankAddress) {
+      throw new Error(
+        `네트워크 ID ${networkId}에 DecentralBank 컨트랙트가 배포되지 않았습니다.`
+      );
+    }
+
+    // DecentralBank 컨트랙트 인스턴스 생성
+    const decentralBankContract = new web3.eth.Contract(
+      DecentralBank.abi as any,
+      decentralBankAddress
+    );
+
+    // unstakeTokens 트랜잭션 실행
+    const unstakeTx = decentralBankContract.methods.unstakeTokens();
+    const gasEstimate = await unstakeTx.estimateGas({ from: account.address });
+
+    const result = await unstakeTx.send({
+      from: account.address,
+      gas: Math.floor(gasEstimate * 1.2), // 20% 버퍼
+    });
+
+    console.log("토큰 언스테이킹 완료:", result.transactionHash);
+    return result.transactionHash;
+  } catch (error: any) {
+    console.error("토큰 언스테이킹 실패:", error);
+    throw new Error(`토큰 언스테이킹에 실패했습니다: ${error.message}`);
+  }
+};

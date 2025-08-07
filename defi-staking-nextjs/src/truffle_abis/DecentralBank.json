@@ -6552,12 +6552,12 @@
     "5777": {
       "events": {},
       "links": {},
-      "address": "0x2B8E2DAC7b73029fA96eE589094b3d0E7C096319",
-      "transactionHash": "0xfaaa8ab80ac8707d1277b0f2424b5fd0ec332abec96067c6c3ab1e7f55e44f0e"
+      "address": "0x0806bb48DC956aCd840D629Ab362BDAE033cEf0E",
+      "transactionHash": "0x72f677c808e1ffa383376e9e209f293f07c32deee9aa57ef9fd19b0b113bfac1"
     }
   },
   "schemaVersion": "3.4.16",
-  "updatedAt": "2025-08-06T14:26:48.277Z",
+  "updatedAt": "2025-08-07T15:37:29.269Z",
   "networkType": "ethereum",
   "devdoc": {
     "kind": "dev",

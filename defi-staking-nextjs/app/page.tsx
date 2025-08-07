@@ -3,6 +3,7 @@
 import { useState } from "react";
 import AccountImporter from "./components/account-importer";
 import ContractInfo from "./components/contract-info";
+import StakingManager from "./components/staking-manager";
 
 export default function Home() {
   const [error, setError] = useState<string>("");
@@ -46,6 +47,7 @@ export default function Home() {
               customRpcUrl={customRpcUrl}
               onError={handleError}
             />
+            <StakingManager customRpcUrl={customRpcUrl} onError={handleError} />
           </div>
 
           {error && (
